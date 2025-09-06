@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Filter, Calendar, Flag, FolderOpen } from 'lucide-react';
+import { Filter, Calendar, Flag, FolderOpen, MoreHorizontal, Trash2, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -18,7 +18,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { userTasks, UserTask } from '@/lib/userMockData';
+import { deleteTask } from '@/lib/mockData';
 import { format } from 'date-fns';
 
 const statusColors = {
@@ -63,6 +70,11 @@ export default function MyTasksPage() {
     setTasks(prev => prev.map(task => 
       task.id === taskId ? { ...task, status: newStatus } : task
     ));
+  };
+
+  const handleDeleteTask = (taskId: string) => {
+    deleteTask(taskId);
+    setTasks(prev => prev.filter(t => t.id !== taskId));
   };
 
   const getDeadlineColor = (dueDate: string) => {
@@ -187,9 +199,23 @@ export default function MyTasksPage() {
                     </Select>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="outline" size="sm">
-                      View Details
-                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <MoreHorizontal className="w-4 h-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => console.log('Edit task', task.id)}>
+                          <Pencil className="w-4 h-4 mr-2" />
+                          Edit Task
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDeleteTask(task.id)} className="text-red-600">
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Delete Task
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))}

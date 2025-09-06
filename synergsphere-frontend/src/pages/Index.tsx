@@ -23,6 +23,7 @@ import Sidebar from '@/components/Sidebar';
 import ProjectModal from '@/components/ProjectModal';
 import KanbanBoard from '@/components/KanbanBoard';
 import TeamManagement from '@/components/TeamManagement';
+import Settings from '@/components/Settings';
 import { mockProjects, dashboardStats } from '@/lib/mockData';
 import { format } from 'date-fns';
 
@@ -260,16 +261,7 @@ export default function Dashboard() {
           </div>
         );
       case 'settings':
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Settings</h2>
-            <Card>
-              <CardContent className="p-8 text-center">
-                <p className="text-gray-500">Settings panel coming soon...</p>
-              </CardContent>
-            </Card>
-          </div>
-        );
+        return <Settings />;
       default:
         return renderDashboardContent();
     }

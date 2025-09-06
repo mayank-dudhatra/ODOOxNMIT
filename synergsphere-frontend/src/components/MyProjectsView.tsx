@@ -1,9 +1,17 @@
-import { Eye, Calendar, Users } from 'lucide-react';
+import { useState } from 'react';
+import { Eye, Calendar, Users, MoreHorizontal, Trash2, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { userProjects } from '@/lib/userMockData';
+import { deleteProject } from '@/lib/mockData';
 import { format } from 'date-fns';
 
 interface MyProjectsViewProps {
@@ -18,6 +26,13 @@ const statusColors = {
 };
 
 export default function MyProjectsView({ onProjectSelect }: MyProjectsViewProps) {
+  const [projects, setProjects] = useState(userProjects);
+
+  const handleDeleteProject = (projectId: string) => {
+    deleteProject(projectId);
+    setProjects(prev => prev.filter(p => p.id !== projectId));
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -25,7 +40,7 @@ export default function MyProjectsView({ onProjectSelect }: MyProjectsViewProps)
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {userProjects.map((project) => (
+          {projects.map((project) => (
             <Card key={project.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="space-y-4">
@@ -64,14 +79,28 @@ export default function MyProjectsView({ onProjectSelect }: MyProjectsViewProps)
                     </div>
                   )}
 
-                  <Button 
-                    className="w-full" 
-                    variant="outline"
-                    onClick={() => onProjectSelect(project.id)}
-                  >
-                    <Eye className="w-4 h-4 mr-2" />
-                    View Project
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="w-full">
+                        <MoreHorizontal className="w-4 h-4 mr-2" />
+                        Actions
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => onProjectSelect(project.id)}>
+                        <Eye className="w-4 h-4 mr-2" />
+                        View Project
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => console.log('Edit project', project.id)}>
+                        <Pencil className="w-4 h-4 mr-2" />
+                        Edit Project
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDeleteProject(project.id)} className="text-red-600">
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete Project
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </CardContent>
             </Card>
