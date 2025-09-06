@@ -1,6 +1,9 @@
-import { useState } from 'react';
-import { TrendingUp, CheckSquare, Clock, Mail } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { TrendingUp, CheckSquare, Clock, Mail, Settings as SettingsIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
+import MainNav from '@/components/MainNav';
+import { useAuth } from '@/hooks/use-auth'; 
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import ProjectInvitations from '@/components/ProjectInvitations';
@@ -8,6 +11,7 @@ import MyProjectsView from '@/components/MyProjectsView';
 import MyTasksPage from '@/components/MyTasksPage';
 import NotificationsCenter from '@/components/NotificationsCenter';
 import ProjectDetailView from '@/components/ProjectDetailView';
+import Settings from '@/components/Settings';
 import { userDashboardStats } from '@/lib/userMockData';
 
 const userNavigation = [
@@ -21,6 +25,27 @@ const userNavigation = [
 export default function UserDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
+  // Navigation items based on user role
+  const userNavigation = [
+    { id: 'dashboard', name: 'Dashboard', icon: TrendingUp },
+    { id: 'projects', name: 'My Projects', icon: TrendingUp },
+    { id: 'tasks', name: 'My Tasks', icon: CheckSquare },
+    { id: 'notifications', name: 'Notifications', icon: Mail },
+  ];
+
+  if (user?.role === 'admin') {
+    userNavigation.push({ id: 'admin', name: 'Admin', icon: SettingsIcon });
+  }
 
   const handleProjectSelect = (projectId: string) => {
     setSelectedProjectId(projectId);
@@ -125,28 +150,31 @@ export default function UserDashboard() {
           />
         ) : renderDashboardContent();
       case 'settings':
-        return (
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Settings</h2>
-            <Card>
-              <CardContent className="p-8 text-center">
-                <p className="text-gray-500">Settings panel coming soon...</p>
-              </CardContent>
-            </Card>
-          </div>
-        );
+        return <Settings />;
       default:
         return renderDashboardContent();
     }
   };
 
   // Create a modified sidebar component for user navigation
-  const UserSidebar = ({ activeTab, onTabChange }: { activeTab: string; onTabChange: (tab: string) => void }) => {
+  const UserSidebar = ({ 
+    activeTab, 
+    onTabChange, 
+    navItems 
+  }: { 
+    activeTab: string; 
+    onTabChange: (tab: string) => void;
+    navItems: Array<{
+      id: string;
+      name: string;
+      icon: React.ComponentType<{ className?: string }>;
+    }>;
+  }) => {
     return (
       <div className="bg-white border-r border-gray-200 w-64">
         <div className="p-4">
           <nav className="space-y-2">
-            {userNavigation.map((item) => {
+            {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               
@@ -171,11 +199,23 @@ export default function UserDashboard() {
     );
   };
 
+  if (!user) return null;
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <MainNav />
       <div className="flex">
-        <UserSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+        <UserSidebar 
+          activeTab={activeTab} 
+          onTabChange={(tab) => {
+            if (tab === 'admin') {
+              navigate('/admin/dashboard');
+              return;
+            }
+            setActiveTab(tab);
+          }} 
+          navItems={userNavigation} 
+        />
         <main className="flex-1">
           {renderContent()}
         </main>
