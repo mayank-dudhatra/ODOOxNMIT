@@ -1,12 +1,19 @@
 import { useState } from 'react';
-import { ArrowLeft, Users, Calendar, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Users, Calendar, BarChart3, MoreHorizontal, Trash2, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import KanbanBoard from './KanbanBoard';
 import ProjectChat from './ProjectChat';
 import { userProjects, userTasks } from '@/lib/userMockData';
+import { deleteProject } from '@/lib/mockData';
 import { format } from 'date-fns';
 
 interface ProjectDetailViewProps {
@@ -24,6 +31,11 @@ const statusColors = {
 export default function ProjectDetailView({ projectId, onBack }: ProjectDetailViewProps) {
   const project = userProjects.find(p => p.id === projectId);
   const projectTasks = userTasks.filter(t => t.projectId === projectId);
+
+  const handleDeleteProject = () => {
+    deleteProject(projectId);
+    onBack();
+  };
 
   if (!project) {
     return (
@@ -46,11 +58,28 @@ export default function ProjectDetailView({ projectId, onBack }: ProjectDetailVi
   return (
     <div className="p-6">
       {/* Header */}
-      <div className="flex items-center space-x-4 mb-6">
+      <div className="flex items-center justify-between mb-6">
         <Button variant="ghost" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Projects
         </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">
+              <MoreHorizontal className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => console.log('Edit project', project.id)}>
+              <Pencil className="w-4 h-4 mr-2" />
+              Edit Project
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDeleteProject} className="text-red-600">
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete Project
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Project Info */}

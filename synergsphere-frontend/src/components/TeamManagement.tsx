@@ -17,6 +17,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
 import {
   Dialog,
@@ -165,6 +166,10 @@ export default function TeamManagement() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => console.log('Edit role for', user.id)}>
+                              Edit Role
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
                           {user.status === 'active' && (
                             <DropdownMenuItem onClick={() => updateUserStatus(user.id, 'removed')}>
                               <UserX className="w-4 h-4 mr-2" />

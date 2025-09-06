@@ -197,3 +197,25 @@ export const dashboardStats = {
   todoTasks: mockTasks.filter(t => t.status === 'todo').length,
   upcomingDeadlines: 3
 };
+
+// Simulation functions for CRUD operations
+export const deleteProject = (id: string) => {
+  const index = mockProjects.findIndex(p => p.id === id);
+  if (index !== -1) {
+    mockProjects.splice(index, 1);
+  }
+};
+
+export const deleteTask = (id: string) => {
+  const index = mockTasks.findIndex(t => t.id === id);
+  if (index !== -1) {
+    mockTasks.splice(index, 1);
+  }
+};
+
+export const updateUser = (id: string, updates: Partial<User>) => {
+  const index = mockUsers.findIndex(u => u.id === id);
+  if (index !== -1) {
+    mockUsers[index] = { ...mockUsers[index], ...updates };
+  }
+};
