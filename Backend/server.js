@@ -4,17 +4,26 @@ import authRoutes from "./routes/authRoutes.js";
 import { protect, restrictTo } from "./middleware/authMiddleware.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import cors from "cors";
+import messageRoutes from "./routes/messageRoutes.js";
+
 
 
 
 const app = express();
 connectDB();
 
+const corsOptions = {
+  origin: 'http://localhost:3000', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
 app.use(cors());
 
 
 
 app.use(express.json());
+app.use("/api/messages", messageRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 
