@@ -3,7 +3,7 @@ import { Plus, Calendar, Flag, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { mockTasks, Task } from '@/lib/mockData';
+import { userTasks, UserTask } from '@/lib/userMockData';
 import { format } from 'date-fns';
 
 const columns = [
@@ -19,13 +19,13 @@ const priorityColors = {
 };
 
 export default function KanbanBoard() {
-  const [tasks, setTasks] = useState(mockTasks);
+  const [tasks, setTasks] = useState(userTasks);
 
   const getTasksByStatus = (status: string) => {
     return tasks.filter(task => task.status === status);
   };
-
-  const TaskCard = ({ task }: { task: Task }) => (
+  
+  const TaskCard = ({ task }: { task: UserTask }) => (
     <Card className="mb-3 hover:shadow-md transition-shadow cursor-pointer">
       <CardContent className="p-4">
         <div className="space-y-3">
@@ -70,10 +70,6 @@ export default function KanbanBoard() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Task Board</h2>
-        <Button className="bg-blue-500 hover:bg-blue-600">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Task
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -93,13 +89,7 @@ export default function KanbanBoard() {
                 <TaskCard key={task.id} task={task} />
               ))}
               
-              <Button 
-                variant="ghost" 
-                className="w-full border-2 border-dashed border-gray-300 hover:border-gray-400 hover:bg-gray-50"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Task
-              </Button>
+              {/* This button is now removed for regular users */}
             </div>
           </div>
         ))}
