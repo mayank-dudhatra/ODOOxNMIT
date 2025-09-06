@@ -64,7 +64,7 @@ export default function Header() {
             </PopoverTrigger>
             <PopoverContent className="w-80 p-0" align="end">
               <div className="p-4 border-b">
-                <h3 className="font-semibold text-gray-900">Notification</h3>
+                <h3 className="font-semibold text-gray-900">Notifications</h3>
               </div>
               <div className="max-h-80 overflow-y-auto">
                 {mockNotifications.map((notification) => (
