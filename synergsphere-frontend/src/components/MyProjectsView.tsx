@@ -91,14 +91,6 @@ export default function MyProjectsView({ onProjectSelect }: MyProjectsViewProps)
                         <Eye className="w-4 h-4 mr-2" />
                         View Project
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => console.log('Edit project', project.id)}>
-                        <Pencil className="w-4 h-4 mr-2" />
-                        Edit Project
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleDeleteProject(project.id)} className="text-red-600">
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete Project
-                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>

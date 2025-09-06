@@ -5,11 +5,12 @@ import {
   Bell,
   Palette,
   Briefcase,
-  Users,
   Settings as SettingsIcon,
-  LogOut,
   Download,
-  Trash2
+  Trash2,
+  Sun,
+  Laptop,
+  Moon,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,6 +21,8 @@ import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { currentUser } from '@/lib/userMockData';
 import { cn } from '@/lib/utils';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTheme } from 'next-themes';
 
 type SettingsTab =
   | 'profile'
@@ -90,7 +93,7 @@ const SettingsSidebar = ({ activeTab, onTabChange, isAdmin }: { activeTab: Setti
         })}
       </>
     )}
-    
+
     <Separator className="my-2" />
     <h3 className="text-lg font-semibold mb-2">Other</h3>
     {navItems.other.map((item) => {
@@ -208,43 +211,71 @@ const NotificationSettings = () => (
   </Card>
 );
 
-const PreferencesSettings = () => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Preferences</CardTitle>
-    </CardHeader>
-    <CardContent className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <p className="font-medium">Dark Mode</p>
-          <p className="text-sm text-muted-foreground">Toggle between light and dark themes.</p>
+const PreferencesSettings = () => {
+  const { theme, setTheme } = useTheme();
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Preferences</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label>Appearance</Label>
+          <Tabs defaultValue={theme} onValueChange={(value) => setTheme(value as 'light' | 'dark' | 'system')}>
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="light" className="flex items-center space-x-2">
+                <Sun className="h-4 w-4" />
+                <span>Light</span>
+              </TabsTrigger>
+              <TabsTrigger value="dark" className="flex items-center space-x-2">
+                <Moon className="h-4 w-4" />
+                <span>Dark</span>
+              </TabsTrigger>
+              <TabsTrigger value="system" className="flex items-center space-x-2">
+                <Laptop className="h-4 w-4" />
+                <span>System</span>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
-        <Switch />
-      </div>
-      <div className="space-y-2">
-        <Label>Language</Label>
-        <Select>
-          <SelectTrigger>
-            <SelectValue placeholder="English" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="en">English</SelectItem>
-            <SelectItem value="es">Spanish</SelectItem>
-            <SelectItem value="fr">French</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-    </CardContent>
-  </Card>
-);
+        <div className="space-y-2">
+          <Label>Language</Label>
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder="English" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="en">English</SelectItem>
+              <SelectItem value="es">Spanish</SelectItem>
+              <SelectItem value="fr">French</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 const AdminSettings = () => (
   <Card>
     <CardHeader>
-      <CardTitle>Admin Settings</CardTitle>
+      <CardTitle>Project Settings</CardTitle>
     </CardHeader>
-    <CardContent>
-      <p className="text-gray-500">Admin-specific settings and tools. This section will contain features to manage all projects, team roles, and company details. </p>
+    <CardContent className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="companyName">Company Name</Label>
+        <Input id="companyName" placeholder="SynergySphere" />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="logo">Company Logo URL</Label>
+        <Input id="logo" placeholder="https://..." />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="companyDescription">Company Description</Label>
+        <Input id="companyDescription" placeholder="Description..." />
+      </div>
+      <Button>Save Company Settings</Button>
     </CardContent>
   </Card>
 );

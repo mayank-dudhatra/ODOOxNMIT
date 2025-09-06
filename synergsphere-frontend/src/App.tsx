@@ -7,6 +7,7 @@ import AuthPage from './pages/auth/AuthPage';
 import UserDashboard from './pages/UserDashboard';
 import AdminDashboard from '@/pages/AdminDashboard';
 import NotFound from './pages/NotFound';
+import { ThemeProvider } from '@/components/theme-provider'; // Import ThemeProvider
 
 const queryClient = new QueryClient();
 
@@ -45,12 +46,14 @@ const AppRoutes = () => (
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </TooltipProvider>
+      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+        <TooltipProvider>
+          <Toaster />
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
