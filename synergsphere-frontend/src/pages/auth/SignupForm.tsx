@@ -3,9 +3,46 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useNavigate } from 'react-router-dom';
 
 const SignupForm = () => {
-  const [role, setRole] = useState('user');
+  const [name, setFullname] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('user' as 'user' | 'admin');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, role })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "Registration failed");
+        return;
+      }
+
+      setSuccess("Registration successful! You can now log in.");
+      // Optional: Navigate to login page after a short delay
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+
+    } catch (err) {
+      setError("An error occurred. Please try again.");
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -13,22 +50,52 @@ const SignupForm = () => {
         <h2 className="text-3xl font-bold text-gray-900">Create an Account</h2>
         <p className="text-sm text-gray-600">Join SynergySphere to start collaborating.</p>
       </div>
-      <form className="space-y-4">
+      {error && (
+        <div className="p-4 text-sm text-red-700 bg-red-100 rounded-lg">
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="p-4 text-sm text-green-700 bg-green-100 rounded-lg">
+          {success}
+        </div>
+      )}
+      <form className="space-y-4" onSubmit={handleSubmit}>
         <div className="space-y-2">
           <Label htmlFor="fullname">Full Name</Label>
-          <Input id="fullname" name="fullname" type="text" placeholder="John Doe" required />
+          <Input
+            id="fullname"
+            type="text"
+            placeholder="John Doe"
+            value={name}
+            onChange={(e) => setFullname(e.target.value)}
+            required
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="email">Email Address</Label>
-          <Input id="email" name="email" type="email" placeholder="name@example.com" required />
+          <Input
+            id="email"
+            type="email"
+            placeholder="name@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
-          <Input id="password" name="password" type="password" required />
+          <Input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
         </div>
         <div className="space-y-2">
           <Label>Account Type</Label>
-          <Select value={role} onValueChange={setRole}>
+          <Select value={role} onValueChange={(value: 'user' | 'admin') => setRole(value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select account type" />
             </SelectTrigger>
